@@ -6,7 +6,7 @@
 
 Deep learning is widely used in various applications of image segmentation. However, for medical images, there exists ambiguous structure boundaries, which is a predominant problem compared with other image types and cannot be solved directly with conventional CNN architectures such as FCN and U-Net (as shown in Fig 1). To tackle with this problem, interactive segmentation algorithms have been proposed, which interactively receive manual inputs (e.g. key points/bounding boxes)  from user during inference time. Although the assist from human improves the performance, it also requires expertise knowledge during test time and is not fully automated.
 
-![image-20201117082030502](.\figures\image-20201117082030502.png)
+![image-20201117082030502](figures\image-20201117082030502.png)
 
 Fig 1. The ambiguous structure boundary problem in medical image segmentation domain. Traditional methods such as U-Net fails in this case. 
 
@@ -20,7 +20,7 @@ To fully automate the process of segmenting medical image with ambiguous boundar
 
 The entire framework (shown in Fig 2.) consists of three parts: Boundary Key Point Selection Module, Boundary Preserving Block (BPB) and Shape Boundary-aware Evaluator (SBE). Since they are not highly coupled, I would like to first introduce each separately and then bring them together when they are trained as a whole, in order to avoid information overloading right at the beginning.
 
-![image-20201111135338324](.\figures\image-20201111135338324.png)
+![image-20201111135338324](figures\image-20201111135338324.png)
 
 Fig 2. Overview of the proposed novel framework. It consists of three parts: Boundary Key-point Selection Module (the gray box on the bottom left corner), the Boundary Preserving Block (integrated inside the auto-encoder network) and the Shape Boundary-aware Evaluator (purple box on the bottom right corner). In this blog, the upper part of the figure (auto-encoder + BPB) would be referred as segmentation network, and the SBE would be referred as SBE network.
 
@@ -35,11 +35,11 @@ This module is a simple algorithm that aims at finding key points on the boundar
 
 First, the boundary of the target object is obtained from ground-truth segmentation map by using Canny edge detector. Then, N points are selected on the boundary and connected to form a polygon. Repeat for T times and select out the key point sets with the highest IOU. The pseudo code is shown in Fig 3.  
 
-![alg](C:\Users\Zihan Xu\Desktop\alg.PNG)
+![alg](figures\alg.PNG)
 
 Fig 3. Proposed boundary key point selection algorithm. From the experimental setups of the paper, T=40000 and N=6.
 
-![image-20201117084336526](.\figures\image-20201117084336526.png)
+![image-20201117084336526](figures\image-20201117084336526.png)
 
 Fig 4. A visual example of boundary key point selection algorithm. The best key points set (as shown with the blue box) is selected based on the Dice score between ground truth map and the constructed polygon.
 
@@ -55,7 +55,7 @@ Again, keep in mind that this boundary key point map $M_{GT}$ would be used for 
 
 The Boundary Preserving Block (BPB) is a novel architectural unit in CNN that **enhances the boundary information of input**, shown in Fig 5. It receives a feature map as input and outputs a feature map of the same size. Therefore this unit can actually be embedded into any network. Similar ideas of devising an architectural unit that can be easily embedded to perform a particular function are not new. A relatively famous one is called ["Squeeze-and-Excitation" Block (SE-Block)](https://arxiv.org/abs/1709.01507), which enhances important channel-wise features. 
 
-![image-20201112020243919](.\figures\image-20201112020243919.png)
+![image-20201112020243919](figures\image-20201112020243919.png)
 
 Fig 5. Detailed structure of Boundary Preserving Block (BPB). 
 
@@ -75,7 +75,7 @@ As shown in Fig 6, the input of SBE is a concatenation of segmentation map (pred
 
 
 
-![image-20201112032626334](.\figures\image-20201112032626334.png)
+![image-20201112032626334](figures\image-20201112032626334.png)
 
 Fig 6. Details of Shape Boundary-aware Evaluator (SBE) network. 
 
@@ -94,11 +94,11 @@ The **segmentation network** is trained with a sum of three different losses as 
 2. Boundary-aware loss (can be regarded as generator loss, measures the similarity between $\hat{S}_{Pred}$ and $M_{GT}$, aims at minimizing the difference between prediction map and GT key point map), D(.) is the the SBE discriminator function
 3. Key point map loss (measures the similarity between $\hat{M^i}$ and $M^i_{GT}$, aims at minimizing the difference between the predicted and ground-truth point maps)
 
-<img src=".\figures\image-20201112040808001.png" alt="image-20201112040808001" style="zoom:67%;" />
+<img src="figures\image-20201112040808001.png" alt="image-20201112040808001" style="zoom:67%;" />
 
 On the other hand, the **SBE** network is trained with a single discriminator loss as shown in (5):
 
-<img src=".\figures\image-20201112041344265.png" alt="image-20201112041344265" style="zoom:67%;" />
+<img src="figures\image-20201112041344265.png" alt="image-20201112041344265" style="zoom:67%;" />
 
 In the original paper, researchers trained the segmentation network 8 times and the SBE network 3 times in an adversarial way on each iteration [1].
 
@@ -114,9 +114,9 @@ The authors used two datasets for experiments: the PH2+ISBI 2016 Skin Lesion Cha
 
 First, they compared their method quantitatively with previous SOTA baseline methods such as U-Net and FCN. Results are shown below on the two datasets, which indicates that the novel framework outperform all previous methods. For further statistical significance proof, they also conducted paired [t-test](https://en.wikipedia.org/wiki/Student's_t-test) between baseline methods and their novel framework. For qualitative evaluation (shown in Fig 7), the authors compared the segmentation results with U-Net and proved the the effectiveness of their work.
 
-![image-20201117074100700](.\figures\image-20201117074100700.png)
+![image-20201117074100700](figures\image-20201117074100700.png)
 
-![image-20201117074851580](.\figures\image-20201117074851580.png)
+![image-20201117074851580](figures\image-20201117074851580.png)
 
 Fig 7. Qualitative evaluation with visualization of segmentation map and key point map on two datasets. From the two examples one can see that the novel framework overcomes the erosion and dilation problems on the target region boundary comparing with U-Net. Also the key point map indicates that the network is learning to accurately detect key points which further facilitates segmentation.
 
@@ -124,7 +124,7 @@ Fig 7. Qualitative evaluation with visualization of segmentation map and key poi
 
 Secondly, ablation study was also introduced to show that the BPB and SBE components both contribute to the performance improvement, regardless of the underlying network architecture, as shown in Fig 8.
 
-![image-20201117075726683](.\figures\image-20201117075726683.png)
+![image-20201117075726683](figures\image-20201117075726683.png)
 
 Fig 8. Ablation results on two datasets. Each component of the framework was added incrementally to the baseline which also incrementally improves the performance.
 
