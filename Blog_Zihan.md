@@ -35,7 +35,7 @@ This module is a simple algorithm that aims at finding key points on the boundar
 
 First, the boundary of the target object is obtained from ground-truth segmentation map by using Canny edge detector. Then, N points are selected on the boundary and connected to form a polygon. Repeat for T times and select out the key point sets with the highest IOU. The pseudo code is shown in Fig 3.  
 
-<img src="figures\alg.PNG" alt="alg" style="zoom:50%;" />
+<img src="figures\alg.png" alt="alg" style="zoom:50%;" />
 
 Fig 3. Proposed boundary key point selection algorithm. From the experimental setups of the paper, T=40000 and N=6.
 
